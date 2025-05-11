@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4><i class="bi bi-pencil-square"></i> Edit Entry</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ entry.title }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="mood" class="form-label">Mood</label>
+                        <select class="form-select" id="mood" name="mood">
+                            <option value="">Select mood...</option>
+                            <option value="happy" {% if entry.mood == 'happy' %}selected{% endif %}>Happy</option>
+                            <option value="sad" {% if entry.mood == 'sad' %}selected{% endif %}>Sad</option>
+                            <option value="angry" {% if entry.mood == 'angry' %}selected{% endif %}>Angry</option>
+                            <option value="excited" {% if entry.mood == 'excited' %}selected{% endif %}>Excited</option>
+                            <option value="tired" {% if entry.mood == 'tired' %}selected{% endif %}>Tired</option>
+                            <option value="neutral" {% if entry.mood == 'neutral' %}selected{% endif %}>Neutral</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Content</label>
+                        <textarea class="form-control" id="content" name="content" rows="10" required>{{ entry.content }}</textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('view_entries') }}" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Update Entry</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h4><i class="bi bi-images"></i> Edit Memory</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ memory.title }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3">{{ memory.description }}</textarea>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="image" class="form-label">Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            {% if memory.image_path %}
+                            <div class="mt-2">
+                                <img src="{{ url_for('static', filename='uploads/images/' + memory.image_path) }}" class="img-thumbnail" style="max-height: 200px;">
+                                <small class="text-muted">Current image</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="audio" class="form-label">Audio Note</label>
+                            <input type="file" class="form-control" id="audio" name="audio" accept="audio/*">
+                            {% if memory.audio_path %}
+                            <div class="mt-2">
+                                <audio controls class="w-100">
+                                    <source src="{{ url_for('static', filename='uploads/audio/' + memory.audio_path) }}" type="audio/mpeg">
+                                </audio>
+                                <small class="text-muted">Current audio</small>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('view_memories') }}" class="btn btn-secondary me-md-2">Cancel</a>
+                        <button type="submit" class="btn btn-success">Update Memory</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

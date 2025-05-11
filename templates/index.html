@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Recent Entries -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5><i class="bi bi-journal-text"></i> Recent Entries</h5>
+            </div>
+            <div class="card-body">
+                {% if entries %}
+                <div class="list-group">
+                    {% for entry in entries %}
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">{{ entry.title }}</h6>
+                            <small>{{ entry.timestamp.strftime('%B %d, %Y') }}</small>
+                        </div>
+                        <p class="mb-1">{{ entry.content[:100] }}{% if entry.content|length > 100 %}...{% endif %}</p>
+                        {% if entry.mood %}
+                        <small class="text-muted">Mood: {{ entry.mood|capitalize }}</small>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No entries yet. <a href="{{ url_for('add_entry') }}">Create your first entry</a></p>
+                {% endif %}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{{ url_for('view_entries') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Memories -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-images"></i> Recent Memories</h5>
+            </div>
+            <div class="card-body">
+                {% if memories %}
+                <div class="row">
+                    {% for memory in memories %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            {% if memory.image_path %}
+                            <img src="{{ url_for('static', filename='uploads/images/' + memory.image_path) }}" 
+                                 class="card-img-top" alt="{{ memory.title }}" style="height: 150px; object-fit: cover;">
+                            {% else %}
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                            {% endif %}
+                            <div class="card-body">
+                                <h6 class="card-title">{{ memory.title }}</h6>
+                                <p class="card-text text-muted small">{{ memory.description|truncate(100) }}</p>
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <small class="text-muted">{{ memory.timestamp.strftime('%B %d, %Y') }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted">No memories saved. <a href="{{ url_for('add_memory') }}">Add your first memory</a></p>
+                {% endif %}
+            </div>
+            <div class="card-footer text-end">
+                <a href="{{ url_for('view_memories') }}" class="btn btn-sm btn-outline-success">View All</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.list-group-item {
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.emoji {
+    font-size: 1.2em;
+}
+
+#imagePreview {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Add these to your existing styles.css */
+.recording-indicator {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.audio-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.audio-visualizer {
+    width: 100%;
+    height: 50px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.audio-wave {
+    height: 100%;
+    background-color: #0d6efd;
+    width: 0%;
+    transition: width 0.1s;
+}
