@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Global Feed{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Anonymous Story Feed</h2>
+
+<div class="space-y-4">
+    {% for post in public_entries %}
+    <div class="bg-white p-4 rounded shadow">
+        <h3 class="text-lg font-semibold">{{ post.title or "Untitled" }}</h3>
+        <p class="text-gray-600">{{ post.snippet }}</p>
+        <p class="text-gray-400 text-sm mt-1">
+            Mood: {{ post.mood or 'N/A' }} |
+            Posted on: {{ post.created_at[:10] }}{% if post.is_anonymous %} | Anonymous{% endif %}
+        </p>
+    </div>
+    {% else %}
+    <p>No public posts yet. Be the first to share!</p>
+    {% endfor %}
+</div>
+{% endblock %}

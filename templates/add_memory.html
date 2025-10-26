@@ -1,242 +1,30 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}Add Memory{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h4><i class="bi bi-images"></i> New Memory</h4>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="{{ url_for('add_memory') }}" enctype="multipart/form-data" id="memoryForm">
-                    <div class="mb-3">
-                        <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="title" name="title" required>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <!-- Image Upload Section -->
-                        <div class="col-md-6 mb-3">
-                            <label for="image" class="form-label">Image</label>
-                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                            <div class="mt-2 text-center" id="imagePreviewContainer" style="display: none;">
-                                <img id="imagePreview" class="img-thumbnail" style="max-height: 200px;">
-                                <button type="button" class="btn btn-sm btn-danger mt-2" id="removeImage">
-                                    <i class="bi bi-trash"></i> Remove Image
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Audio Upload Section -->
-                        <div class="col-md-6">
-                            <label class="form-label">Audio Options</label>
-                            <div class="mb-3">
-                                <div class="btn-group w-100" role="group">
-                                    <button type="button" id="startRecording" class="btn btn-outline-danger">
-                                        <i class="bi bi-mic"></i> Record
-                                    </button>
-                                    <button type="button" id="stopRecording" class="btn btn-outline-secondary" disabled>
-                                        <i class="bi bi-stop-fill"></i> Stop
-                                    </button>
-                                </div>
-                                <div class="mt-2">
-                                    <small class="text-muted">Or upload an audio file:</small>
-                                    <input type="file" class="form-control mt-1" id="audioUpload" name="audio" accept="audio/*">
-                                </div>
-                            </div>
-                            <div id="audioPreviewContainer" class="mt-2" style="display: none;">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <audio controls id="audioPreview" class="w-100 me-2"></audio>
-                                    <button type="button" class="btn btn-sm btn-danger" id="removeAudio">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                                <div id="recordingIndicator" class="text-center mt-2" style="display: none;">
-                                    <div class="spinner-border text-danger spinner-border-sm" role="status">
-                                        <span class="visually-hidden">Recording...</span>
-                                    </div>
-                                    <span class="ms-2 text-danger">Recording...</span>
-                                </div>
-                            </div>
-                            <input type="hidden" id="audioFilename" name="audio_filename">
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                        <a href="{{ url_for('index') }}" class="btn btn-secondary me-md-2">
-                            <i class="bi bi-x-circle"></i> Cancel
-                        </a>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-save"></i> Save Memory
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
+<h2 class="text-2xl font-bold mb-4">Add Memory</h2>
+<form method="POST" enctype="multipart/form-data" class="space-y-4 bg-white p-6 rounded shadow">
+    <div>
+        <label class="block text-gray-700">Title</label>
+        <input type="text" name="title" class="w-full border p-2 rounded" placeholder="Memory title">
     </div>
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    // Image handling
-    document.getElementById('image').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const preview = document.getElementById('imagePreview');
-                preview.src = event.target.result;
-                document.getElementById('imagePreviewContainer').style.display = 'block';
-            }
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Remove image
-    document.getElementById('removeImage').addEventListener('click', function() {
-        document.getElementById('image').value = '';
-        document.getElementById('imagePreview').src = '';
-        document.getElementById('imagePreviewContainer').style.display = 'none';
-    });
-
-    // Audio recording variables
-    let mediaRecorder;
-    let audioChunks = [];
-    let audioContext;
-    let analyser;
-    let microphone;
-    let isRecording = false;
-    
-    // Start recording
-    document.getElementById('startRecording').addEventListener('click', async function() {
-        try {
-            // Reset any previous recording
-            audioChunks = [];
-            document.getElementById('audioPreviewContainer').style.display = 'none';
-            document.getElementById('audioUpload').value = '';
-            
-            // Get microphone access
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            
-            // Setup audio context and analyzer for visualization (optional)
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            microphone = audioContext.createMediaStreamSource(stream);
-            microphone.connect(analyser);
-            
-            // Initialize MediaRecorder
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
-            isRecording = true;
-            
-            // Show recording indicator
-            document.getElementById('recordingIndicator').style.display = 'block';
-            
-            // Collect audio data
-            mediaRecorder.ondataavailable = function(e) {
-                audioChunks.push(e.data);
-            };
-            
-            // Enable stop button
-            document.getElementById('stopRecording').disabled = false;
-            document.getElementById('startRecording').disabled = true;
-            
-        } catch (err) {
-            console.error('Error:', err);
-            alert('Could not access microphone. Please check permissions.');
-            stopRecording();
-        }
-    });
-    
-    // Stop recording
-    document.getElementById('stopRecording').addEventListener('click', stopRecording);
-    
-    function stopRecording() {
-        if (!isRecording) return;
-        
-        mediaRecorder.stop();
-        isRecording = false;
-        
-        // Hide recording indicator
-        document.getElementById('recordingIndicator').style.display = 'none';
-        
-        // Disable stop button
-        document.getElementById('stopRecording').disabled = true;
-        document.getElementById('startRecording').disabled = false;
-        
-        // Close microphone stream
-        if (mediaRecorder.stream) {
-            mediaRecorder.stream.getTracks().forEach(track => track.stop());
-        }
-        
-        // Process recorded audio
-        mediaRecorder.onstop = async function() {
-            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-            
-            // Create audio player for preview
-            const audioUrl = URL.createObjectURL(audioBlob);
-            const audioPlayer = document.getElementById('audioPreview');
-            audioPlayer.src = audioUrl;
-            document.getElementById('audioPreviewContainer').style.display = 'block';
-            
-            // Upload the recording
-            const formData = new FormData();
-            formData.append('audio', audioBlob, 'recording.webm');
-            
-            try {
-                const response = await fetch('/record_audio', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    document.getElementById('audioFilename').value = result.filename;
-                } else {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Failed to upload recording');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error saving recording: ' + error.message);
-                document.getElementById('audioPreviewContainer').style.display = 'none';
-            }
-        };
-    }
-    
-    // Handle audio file upload
-    document.getElementById('audioUpload').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const audioPlayer = document.getElementById('audioPreview');
-            audioPlayer.src = URL.createObjectURL(file);
-            document.getElementById('audioPreviewContainer').style.display = 'block';
-            document.getElementById('audioFilename').value = '';
-        }
-    });
-    
-    // Remove audio
-    document.getElementById('removeAudio').addEventListener('click', function() {
-        document.getElementById('audioPreview').src = '';
-        document.getElementById('audioUpload').value = '';
-        document.getElementById('audioFilename').value = '';
-        document.getElementById('audioPreviewContainer').style.display = 'none';
-    });
-    
-    // Prevent form submission if recording is in progress
-    document.getElementById('memoryForm').addEventListener('submit', function(e) {
-        if (isRecording) {
-            e.preventDefault();
-            alert('Please stop recording before submitting');
-        }
-    });
-</script>
+    <div>
+        <label class="block text-gray-700">Description</label>
+        <textarea name="description" class="w-full border p-2 rounded h-32"></textarea>
+    </div>
+    <div>
+        <label class="block text-gray-700">Visibility</label>
+        <select name="visibility" class="w-full border p-2 rounded">
+            <option value="private">Private</option>
+            <option value="public">Public</option>
+            <option value="anonymous">Anonymous</option>
+        </select>
+    </div>
+    <div>
+        <label class="block text-gray-700">Attach Image</label>
+        <input type="file" name="image" class="w-full">
+    </div>
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save Memory</button>
+</form>
 {% endblock %}

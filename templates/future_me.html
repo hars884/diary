@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Dear Future Me{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Write to Your Future Self</h2>
+<form method="POST" class="space-y-4 bg-white p-6 rounded shadow">
+    <div>
+        <label class="block text-gray-700">Message Title</label>
+        <input type="text" name="title" class="w-full border p-2 rounded" placeholder="Future message title">
+    </div>
+    <div>
+        <label class="block text-gray-700">Message Content</label>
+        <textarea name="content" class="w-full border p-2 rounded h-48"></textarea>
+    </div>
+    <div>
+        <label class="block text-gray-700">Unlock Date</label>
+        <input type="date" name="unlock_date" class="w-full border p-2 rounded">
+    </div>
+    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Save Message</button>
+</form>
+{% endblock %}

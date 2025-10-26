@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Memory Map{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">Photo Memories Map</h2>
+<div id="map" class="w-full h-96 rounded shadow"></div>
+
+<script>
+    // Example with Leaflet.js (include in base.html header/footer scripts)
+    var map = L.map('map').setView([20, 77], 4);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    {% for mem in memories_with_location %}
+    L.marker([{{ mem.lat }}, {{ mem.lng }}]).addTo(map)
+        .bindPopup("<b>{{ mem.title }}</b><br>{{ mem.description[:50] }}...");
+    {% endfor %}
+</script>
+{% endblock %}

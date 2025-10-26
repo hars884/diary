@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}View Entry{% endblock %}
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">{{ entry.title }}</h2>
+<p class="text-gray-600 mb-4">{{ entry.content }}</p>
+
+<p class="text-gray-400 text-sm mb-4">
+    Created at: {{ entry.created_at.strftime('%b %d, %Y %H:%M') if entry.created_at else 'N/A' }} |
+    Mood: {{ entry.mood or 'N/A' }} |
+    Visibility: {{ entry.visibility }}
+</p>
+
+<div class="space-x-2">
+    <a href="{{ url_for('edit_entry', entry_id=entry.id) }}" class="text-yellow-500 hover:underline">Edit</a>
+    <form action="{{ url_for('delete_entry', entry_id=entry.id) }}" method="POST" class="inline">
+        <button type="submit" class="text-red-500 hover:underline" onclick="return confirm('Are you sure?');">
+            Delete
+        </button>
+    </form>
+    <a href="{{ url_for('list_entries') }}" class="text-blue-500 hover:underline">Back to all entries</a>
+</div>
+{% endblock %}
